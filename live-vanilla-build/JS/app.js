@@ -6,10 +6,50 @@ const App = {
 		resetBtn: document.querySelector('[data-id="reset-btn"]'),
 		newRoundBtn: document.querySelector('[data-id="new-round-btn"]'),
 		squares: document.querySelectorAll('[data-id="square"]'),
+		modal: document.querySelectorAll('[data-id="modal"]'),
+		modalText: document.querySelectorAll('[data-id="modal-text"]'),
+		modalBtn: document.querySelectorAll('[data-id="modal-btn"]'),
 	},
 
 	state: {
 		moves: [],
+	},
+
+	gameSetStatus(moves) {
+		const p1Moves = moves
+			.filter((move) => move.playerID === 1)
+			.map((move) => +move.squareID);
+		const p2Moves = moves
+			.filter((move) => move.playerID === 2)
+			.map((move) => +move.squareID);
+
+		//* Detect if there is a winner or tie LOGIC
+		const winningPatterns = [
+			[1, 2, 3],
+			[1, 5, 9],
+			[1, 4, 7],
+			[2, 5, 8],
+			[3, 5, 7],
+			[3, 6, 9],
+			[4, 5, 6],
+			[7, 8, 9],
+		];
+
+		let winner = null;
+
+		winningPatterns.forEach((patter) => {
+			//console.log({ patter, p1Moves, p2Moves });
+			const p1Wins = patter.every((v) => p1Moves.includes(v));
+			const p2Wins = patter.every((v) => p2Moves.includes(v));
+
+			if (p1Wins) winner = 1;
+			if (p2Wins) winner = 2;
+		});
+
+		return {
+			status: moves.length === 9 || winner != null ? "Complete" : "in-progress",
+			winner,
+		};
 	},
 
 	init() {
@@ -41,13 +81,11 @@ const App = {
 				};
 
 				if (hasMove(+square.id)) {
-					console.log("estoy aqui");
 					return;
 				}
 
 				//* Set up the current player
 				const lastMove = App.state.moves.at(-1);
-				//console.log(lastMove);
 				const getOppositePlayer = (playerID) => (playerID === 1 ? 2 : 1);
 				const currentPlayer =
 					App.state.moves.length === 0
@@ -64,22 +102,25 @@ const App = {
 					icon.classList.add("fa-solid", "fa-o", "turquoise");
 				}
 
+				//App.state.moves.push({ squareID: +square.id, playerID: currentPlayer });
+
+				App.state.moves = [
+					...App.state.moves,
+					{ squareID: +square.id, playerID: currentPlayer },
+				];
+
 				//* ADD in the square the "X" or "O"
 				square.replaceChildren(icon);
 
-				App.state.moves.push({ squareID: +square.id, playerID: currentPlayer });
+				const game = App.gameSetStatus(App.state.moves);
 
-				//* Detect if there is a winner or tie LOGIC
-				const winningPatterns = [
-					[1, 2, 3],
-					[1, 5, 9],
-					[1, 4, 7],
-					[2, 5, 8],
-					[3, 5, 7],
-					[3, 6, 9],
-					[4, 5, 6],
-					[7, 8, 9],
-				];
+				if (game.status === "Complete") {
+					if (game.winner) {
+						alert(`Player ${game.winner} wins!`);
+					} else {
+						alert(`Tie!`);
+					}
+				}
 			});
 		});
 	},

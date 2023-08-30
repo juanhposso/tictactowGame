@@ -1,4 +1,6 @@
-const App = {
+import View from "./view.js";
+
+/* const App = {
 	//All of our selected HTML elements
 	$: {
 		menu: document.querySelector('[data-id="menu"]'),
@@ -102,9 +104,9 @@ const App = {
 				const currentPlayer =
 					App.state.moves.length === 0
 						? 1
-						: getOppositePlayer(lastMove.playerID);
+						: getOppositePlayer(lastMove.playerID); // 1
 
-				const nextPlayer = getOppositePlayer(currentPlayer);
+				const nextPlayer = getOppositePlayer(currentPlayer); // 2
 
 				//* Create the nodeElement
 				const squareIcon = document.createElement("i");
@@ -146,6 +148,25 @@ const App = {
 			});
 		});
 	},
-};
+}; */
 
-window.addEventListener("load", App.init);
+function init() {
+	const view = new View();
+
+	view.bindGameResetEvent((event) => {
+		console.log(`clicking the ResetEvent:`);
+		console.log(event);
+	});
+
+	view.bindNewRoundEvent((event) => {
+		console.log(`clicking the RoundEvent:`);
+		console.log(event);
+	});
+
+	view.bindPLayerMoveEvent((event) => {
+		console.log(`clicking the SquareEvent: `);
+		console.log(event);
+	});
+}
+
+window.addEventListener("load", init);

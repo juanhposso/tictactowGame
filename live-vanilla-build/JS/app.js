@@ -6,9 +6,10 @@ const App = {
 		resetBtn: document.querySelector('[data-id="reset-btn"]'),
 		newRoundBtn: document.querySelector('[data-id="new-round-btn"]'),
 		squares: document.querySelectorAll('[data-id="square"]'),
-		modal: document.querySelectorAll('[data-id="modal"]'),
-		modalText: document.querySelectorAll('[data-id="modal-text"]'),
-		modalBtn: document.querySelectorAll('[data-id="modal-btn"]'),
+		modal: document.querySelector('[data-id="modal"]'),
+		modalText: document.querySelector('[data-id="modal-text"]'),
+		modalBtn: document.querySelector('[data-id="modal-btn"]'),
+		turn: document.querySelector('[data-id="turn"]'),
 	},
 
 	state: {
@@ -69,6 +70,17 @@ const App = {
 			console.log("Add a new round");
 		});
 
+		App.$.modalBtn.addEventListener("click", (event) => {
+			App.state.moves = [];
+			App.$.modal.classList.add("hidden");
+
+			App.$.squares.forEach((square) => {
+				while (square.firstChild) {
+					square.removeChild(square.firstChild);
+				}
+			});
+		});
+
 		App.$.squares.forEach((square) => {
 			square.addEventListener("click", (event) => {
 				//* Check if the square is already check with "X" or "O"
@@ -92,17 +104,26 @@ const App = {
 						? 1
 						: getOppositePlayer(lastMove.playerID);
 
+				const nextPlayer = getOppositePlayer(currentPlayer);
+
 				//* Create the nodeElement
-				const icon = document.createElement("i");
+				const squareIcon = document.createElement("i");
+				const turnIcon = document.createElement("i");
+				const turnLabel = document.createElement("p");
+				turnLabel.innerHTML = `Player ${nextPlayer}, you are up!`;
 
 				//* Check what the current player is to place in the square "X" or "O"
 				if (currentPlayer === 1) {
-					icon.classList.add("fa-solid", "fa-x", "yellow");
+					squareIcon.classList.add("fa-solid", "fa-x", "yellow");
+					turnIcon.classList.add("fa-solid", "fa-o", "turquoise");
+					turnLabel.classList = "turquoise";
 				} else {
-					icon.classList.add("fa-solid", "fa-o", "turquoise");
+					squareIcon.classList.add("fa-solid", "fa-o", "turquoise");
+					turnIcon.classList.add("fa-solid", "fa-x", "yellow");
+					turnLabel.classList = "yellow";
 				}
 
-				//App.state.moves.push({ squareID: +square.id, playerID: currentPlayer });
+				App.$.turn.replaceChildren(turnIcon, turnLabel);
 
 				App.state.moves = [
 					...App.state.moves,
@@ -110,15 +131,16 @@ const App = {
 				];
 
 				//* ADD in the square the "X" or "O"
-				square.replaceChildren(icon);
+				square.replaceChildren(squareIcon);
 
 				const game = App.gameSetStatus(App.state.moves);
 
 				if (game.status === "Complete") {
+					App.$.modal.classList.remove("hidden");
 					if (game.winner) {
-						alert(`Player ${game.winner} wins!`);
+						App.$.modalText.innerHTML = `Winner is ${game.winner}`;
 					} else {
-						alert(`Tie!`);
+						App.$.modalText.innerHTML = `Tie Game`;
 					}
 				}
 			});

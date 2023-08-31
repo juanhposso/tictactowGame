@@ -164,8 +164,8 @@ function init() {
 	});
 
 	view.bindPLayerMoveEvent((event) => {
-		console.log(`clicking the SquareEvent: `);
-		console.log(event);
+		view.setTurnIndicator(2);
+		view.handlerPlayerMove(event.target, 1);
 	});
 }
 

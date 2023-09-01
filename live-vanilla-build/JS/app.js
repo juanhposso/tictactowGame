@@ -1,3 +1,4 @@
+import Store from "./store.js";
 import View from "./view.js";
 
 /* const App = {
@@ -150,8 +151,24 @@ import View from "./view.js";
 	},
 }; */
 
+const players = [
+	{
+		id: 1,
+		name: "Player 1",
+		iconClass: "fa-x",
+		colorClass: "turquoise",
+	},
+	{
+		id: 2,
+		name: "Player 2",
+		iconClass: "fa-o",
+		colorClass: "yellow",
+	},
+];
+
 function init() {
 	const view = new View();
+	const store = new Store();
 
 	view.bindGameResetEvent((event) => {
 		console.log(`clicking the ResetEvent:`);
@@ -164,7 +181,7 @@ function init() {
 	});
 
 	view.bindPLayerMoveEvent((event) => {
-		view.setTurnIndicator(2);
+		view.setTurnIndicator(players[1]);
 		view.handlerPlayerMove(event.target, 1);
 	});
 }

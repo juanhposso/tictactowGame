@@ -68,13 +68,11 @@ export default class View {
 		const icon = document.createElement("i");
 		const label = document.createElement("p");
 
-		this.$.turn.classList.add(player === 1 ? "yellow" : "turquoise");
-		this.$.turn.classList.remove(player === 1 ? "turquoise" : "yellow");
+		icon.classList.add("fa-solid", player.colorClass, player.iconClass);
 
-		icon.classList.add("fa-solid", player === 1 ? "fa-x" : "fa-o");
+		label.classList.add(player.colorClass);
 
-		label.innerHTML =
-			player === 1 ? "Player 1 you are up!" : "Player 2 you are up!";
+		label.innerHTML = `${player.name}, you  are up! `;
 
 		this.$.turn.replaceChildren(icon, label);
 	}

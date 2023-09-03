@@ -10,23 +10,23 @@ export default class Store {
 	}
 
 	get game() {
-		const state = this.#getState();
+		const state = this.#getState(); // default {move: {}}
 
-		const currentPlayer = this.players[state.moves.length % 2];
-
-		//console.log(currentPlayer);
+		const currentPlayer = this.players[state.moves.length % 2]; // 0 default
 
 		return {
+			moves: state.moves,
 			currentPlayer,
 		};
 	}
 
 	playerMove(squareId) {
-		const state = this.#getState();
+		const state = this.#getState(); // bring #state it is equal to initialValue
 
-		const stateClone = structuredClone(state);
+		const stateClone = structuredClone(state); // clone the state
 
-		state.moves.push({
+		// edit the stateClone by adding the squareId and the currentPlayer
+		stateClone.moves.push({
 			squareId,
 			player: this.game.currentPlayer,
 		});

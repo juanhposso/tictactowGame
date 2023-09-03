@@ -180,12 +180,19 @@ function init() {
 		console.log(event);
 	});
 
-	view.bindPLayerMoveEvent((event) => {
-		const clickSquare = event.target;
+	view.bindPLayerMoveEvent((square) => {
+		console.log(square);
+		const existingMove = store.game.moves.find((move) => {
+			return move.squareId === +square.Id;
+		});
 
-		view.handlerPlayerMove(clickSquare, store.game.currentPlayer);
+		if (existingMove) {
+			return;
+		}
 
-		store.playerMove(+clickSquare.id);
+		view.handlerPlayerMove(square, store.game.currentPlayer);
+
+		store.playerMove(+square.id);
 
 		view.setTurnIndicator(store.game.currentPlayer);
 	});

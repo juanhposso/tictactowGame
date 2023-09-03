@@ -54,11 +54,7 @@ export default class View {
 
 	handlerPlayerMove(squareEl, player) {
 		const icon = document.createElement("i");
-		icon.classList.add(
-			"fa-solid",
-			player === 1 ? "fa-x" : "fa-o",
-			player === 1 ? "yellow" : "turquoise"
-		);
+		icon.classList.add("fa-solid", player.iconClass, player.colorClass);
 
 		squareEl.replaceChildren(icon);
 	}
@@ -68,7 +64,7 @@ export default class View {
 		const icon = document.createElement("i");
 		const label = document.createElement("p");
 
-		icon.classList.add("fa-solid", player.colorClass, player.iconClass);
+		icon.classList.add("fa-solid", player.iconClass, player.colorClass);
 
 		label.classList.add(player.colorClass);
 

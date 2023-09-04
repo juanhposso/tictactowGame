@@ -32,6 +32,7 @@ export default class View {
 
 	bindPLayerMoveEvent(handler) {
 		this.$$.squares.forEach((square) => {
+			//console.log(square);
 			square.addEventListener("click", (event) => handler(square));
 		});
 	}
@@ -41,6 +42,10 @@ export default class View {
 	 * DOM Helpers Methods
 	 *
 	 */
+
+	openModal(message) {
+		this.$.modal.classList.remove("hidden");
+	}
 
 	#toggleMenu() {
 		this.$.menuItems.classList.toggle("hidden");

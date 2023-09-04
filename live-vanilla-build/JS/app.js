@@ -181,19 +181,27 @@ function init() {
 	});
 
 	view.bindPLayerMoveEvent((square) => {
-		console.log(square);
 		const existingMove = store.game.moves.find((move) => {
-			return move.squareId === +square.Id;
+			return move.squareId === +square.id;
 		});
 
 		if (existingMove) {
 			return;
 		}
 
+		//* Place an icon of the current player in a square
 		view.handlerPlayerMove(square, store.game.currentPlayer);
 
+		//* Advance to the next state by pushing a move to the moves array
 		store.playerMove(+square.id);
 
+		if (store.game.status.isComplete) {
+			view.openModal();
+
+			return;
+		}
+
+		//* Set the next player's turn indicator
 		view.setTurnIndicator(store.game.currentPlayer);
 	});
 }

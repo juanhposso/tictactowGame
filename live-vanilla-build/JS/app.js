@@ -171,8 +171,12 @@ function init() {
 	const store = new Store(players);
 
 	view.bindGameResetEvent((event) => {
-		console.log(`clicking the ResetEvent:`);
-		console.log(event);
+		view.closeAll();
+
+		store.reset();
+
+		view.clearMoves();
+		view.setTurnIndicator(store.game.currentPlayer);
 	});
 
 	view.bindNewRoundEvent((event) => {
@@ -196,7 +200,11 @@ function init() {
 		store.playerMove(+square.id);
 
 		if (store.game.status.isComplete) {
-			view.openModal();
+			view.openModal(
+				store.game.status.winner
+					? `${store.game.status.winner.name} wins!`
+					: `Tie!`
+			);
 
 			return;
 		}

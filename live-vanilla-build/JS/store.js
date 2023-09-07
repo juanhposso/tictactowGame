@@ -15,12 +15,13 @@ export default class Store {
 
 	get stats() {
 		const state = this.#getState();
+		console.log(state);
 
 		return {
 			playerWithStats: this.players.map((player) => {
 				const wins = state.history.currentRoundGames.filter(
 					(game) => game.status.winner?.id === player.id
-				).length;
+				).length; //return a number
 
 				return {
 					...player,
@@ -99,6 +100,17 @@ export default class Store {
 		}
 
 		stateClone.currentGameMoves = [];
+
+		this.#saveState(stateClone);
+	}
+
+	newRound() {
+		this.reset();
+
+		const stateClone = structuredClone(this.#getState());
+
+		stateClone.history.allGames.push(...stateClone.history.currentRoundGames);
+		stateClone.history.currentRoundGames = [];
 
 		this.#saveState(stateClone);
 	}

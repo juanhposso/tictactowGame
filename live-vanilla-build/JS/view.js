@@ -36,7 +36,6 @@ export default class View {
 
 	bindPLayerMoveEvent(handler) {
 		this.$$.squares.forEach((square) => {
-			//console.log(square);
 			square.addEventListener("click", (event) => handler(square));
 		});
 	}
@@ -44,6 +43,16 @@ export default class View {
 	clearMoves() {
 		this.$$.squares.forEach((square) => {
 			square.replaceChildren();
+		});
+	}
+
+	initializeMove(moves) {
+		this.$$.squares.forEach((square) => {
+			const existingMove = moves.find((move) => move.squareId === +square.id);
+
+			if (existingMove) {
+				this.handlerPlayerMove(square, existingMove.player);
+			}
 		});
 	}
 

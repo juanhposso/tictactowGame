@@ -4,6 +4,7 @@ export default class View {
 	$$ = {};
 
 	constructor() {
+		this.$.grid = this.#qs('[data-id="grid"]');
 		this.$.menu = this.#qs('[data-id="menu"]');
 		this.$.menuBtn = this.#qs('[data-id="menu-btn"]');
 		this.$.menuItems = this.#qs('[data-id="menu-items"]');
@@ -25,6 +26,31 @@ export default class View {
 		});
 	}
 
+	render(game, stats) {
+		const { playerWithStats, ties } = stats;
+		const {
+			moves,
+			currentPlayer,
+			status: { isComplete, winner },
+		} = game;
+
+		this.#closeAll();
+		this.#clearMoves();
+		this.#updateScoreBoard(
+			playerWithStats[0].wins,
+			playerWithStats[1].wins,
+			ties
+		);
+
+		this.#initializeMove(moves);
+
+		if (isComplete) {
+			this.#openModal(winner ? `${winner.name} wins!` : `Tie!`);
+		}
+
+		this.#setTurnIndicator(currentPlayer);
+	}
+
 	bindGameResetEvent(handler) {
 		this.$.resetBtn.addEventListener("click", handler);
 		this.$.modalBtn.addEventListener("click", handler);
@@ -35,25 +61,7 @@ export default class View {
 	}
 
 	bindPLayerMoveEvent(handler) {
-		this.$$.squares.forEach((square) => {
-			square.addEventListener("click", (event) => handler(square));
-		});
-	}
-
-	clearMoves() {
-		this.$$.squares.forEach((square) => {
-			square.replaceChildren();
-		});
-	}
-
-	initializeMove(moves) {
-		this.$$.squares.forEach((square) => {
-			const existingMove = moves.find((move) => move.squareId === +square.id);
-
-			if (existingMove) {
-				this.handlerPlayerMove(square, existingMove.player);
-			}
-		});
+		this.#delegate(this.$.grid, '[data-id="square"]', "click", handler);
 	}
 
 	/*
@@ -62,13 +70,13 @@ export default class View {
 	 *
 	 */
 
-	updateScoreBoard(p1Wins, p2Wins, ties) {
+	#updateScoreBoard(p1Wins, p2Wins, ties) {
 		this.$.p1Wins.innerText = `${p1Wins} wins!`;
 		this.$.p2Wins.innerText = `${p2Wins} wins!`;
 		this.$.ties.innerText = `${ties} ties!`;
 	}
 
-	openModal(message) {
+	#openModal(message) {
 		this.$.modal.classList.remove("hidden");
 		this.$.modalText.innerText = message;
 	}
@@ -77,9 +85,25 @@ export default class View {
 		this.$.modal.classList.add("hidden");
 	}
 
-	closeAll() {
+	#closeAll() {
 		this.#closeModal();
 		this.#closeMenu();
+	}
+
+	#clearMoves() {
+		this.$$.squares.forEach((square) => {
+			square.replaceChildren();
+		});
+	}
+
+	#initializeMove(moves) {
+		this.$$.squares.forEach((square) => {
+			const existingMove = moves.find((move) => move.squareId === +square.id);
+
+			if (existingMove) {
+				this.#handlerPlayerMove(square, existingMove.player);
+			}
+		});
 	}
 
 	#closeMenu() {
@@ -102,7 +126,7 @@ export default class View {
 		icon.classList.toggle("fa-chevron-up");
 	}
 
-	handlerPlayerMove(squareEl, player) {
+	#handlerPlayerMove(squareEl, player) {
 		const icon = document.createElement("i");
 		icon.classList.add("fa-solid", player.iconClass, player.colorClass);
 
@@ -110,7 +134,7 @@ export default class View {
 	}
 
 	// ? player 1 | 2
-	setTurnIndicator(player) {
+	#setTurnIndicator(player) {
 		const icon = document.createElement("i");
 		const label = document.createElement("p");
 
@@ -139,5 +163,13 @@ export default class View {
 		if (!elList) throw new Error("Could not find elements");
 
 		return elList;
+	}
+
+	#delegate(el, selector, eventKey, handler) {
+		el.addEventListener(eventKey, (event) => {
+			if (event.target.matches(selector)) {
+				handler(event.target);
+			}
+		});
 	}
 }

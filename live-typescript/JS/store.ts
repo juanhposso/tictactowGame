@@ -1,5 +1,7 @@
-const initialValue = {
-	currentGameMoves: [],
+import type { GameState, Player } from "./types";
+
+const initialValue: GameState = {
+	currentGameMoves: [], // * All the players move for the active game
 	history: {
 		currentRoundGames: [],
 		allGames: [],
@@ -7,10 +9,11 @@ const initialValue = {
 };
 
 export default class Store extends EventTarget {
-	constructor(key, players) {
+	constructor(
+		private readonly storageKey: string,
+		private readonly players: Player[]
+	) {
 		super();
-		this.storageKey = key;
-		this.players = players;
 	}
 
 	get stats() {
@@ -74,7 +77,7 @@ export default class Store extends EventTarget {
 		};
 	}
 
-	playerMove(squareId) {
+	playerMove(squareId: number) {
 		const stateClone = structuredClone(this.#getState()); // clone the state
 
 		// edit the stateClone by adding the squareId and the currentPlayer
@@ -106,7 +109,7 @@ export default class Store extends EventTarget {
 	newRound() {
 		this.reset();
 
-		const stateClone = structuredClone(this.#getState());
+		const stateClone: GameState = structuredClone(this.#getState());
 
 		stateClone.history.allGames.push(...stateClone.history.currentRoundGames);
 		stateClone.history.currentRoundGames = [];
@@ -114,18 +117,21 @@ export default class Store extends EventTarget {
 		this.#saveState(stateClone);
 	}
 
-	#getState() {
+	#getState(): GameState {
 		const item = window.localStorage.getItem(this.storageKey);
 
-		return item ? JSON.parse(item) : initialValue;
+		return item ? (JSON.parse(item) as GameState) : initialValue;
 	}
 
-	#saveState(stateOrFn) {
-		const previousState = this.#getState();
+	// * Todo lo que esta comentado es por que no afecta en el
+	// * funcionamiento del juego ya que NO RETORNA UNA FUNCION
+	// ? | ((previousState: GameState) => GameState)
+	#saveState(stateOrFn: GameState) {
+		//const previousState = this.#getState();
 
-		let newState;
+		let newState = stateOrFn;
 
-		switch (typeof stateOrFn) {
+		/* 		switch (typeof stateOrFn) {
 			case "function":
 				newState = stateOrFn(previousState);
 				break;
@@ -134,7 +140,7 @@ export default class Store extends EventTarget {
 				break;
 			default:
 				throw new Error("invalid argument passed to saveState");
-		}
+		} */
 
 		window.localStorage.setItem(this.storageKey, JSON.stringify(newState));
 		this.dispatchEvent(new Event("statechange"));

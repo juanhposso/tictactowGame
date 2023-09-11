@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/juanhposso/tictactowGame/issues"
   },
-  "homepage": "https://github.com/juanhposso/tictactowGame#readme"
+  "homepage": "https://github.com/juanhposso/tictactowGame#readme",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
 }

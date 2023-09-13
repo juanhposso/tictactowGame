@@ -27,3 +27,9 @@ export type GameState = {
 		allGames: Game[];
 	};
 };
+
+export type RenderGameType = {
+	moves: Move[];
+	currentPlayer: Player;
+	status: GameStatus;
+};

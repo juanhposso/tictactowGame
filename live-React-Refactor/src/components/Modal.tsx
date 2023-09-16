@@ -1,4 +1,4 @@
-import "./Modal.css";
+import "./css/Modal.css";
 
 type Props = {
 	message: string;

@@ -2,15 +2,15 @@ import "./css/Modal.css";
 
 type Props = {
 	message: string;
-	player: number;
+	onClickHandler(): void;
 };
 
-export default function Modal({ message, player }: Props) {
+export default function Modal({ message, onClickHandler }: Props) {
 	return (
 		<div className='modal'>
 			<div className='modal-contents'>
-				<p>{`${player} wins ${message}`}</p>
-				<button>Play again</button>
+				<p>{`${message} wins!`}</p>
+				<button onClick={onClickHandler}>Play again</button>
 			</div>
 		</div>
 	);
